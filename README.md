@@ -1,24 +1,21 @@
-<h1 align="center">LSWLB</h1>
-<h4 align="center">Blazing fast Linksys Smart Wi-Fi login bruteforcer</h4>
-<p align="center">
-	<a href="https://github.com/I2rys/LSWLB/blob/main/LICENSE"><img src="https://img.shields.io/github/license/I2rys/LSWLB?style=flat-square"></img></a>
-	<a href="https://github.com/I2rys/LSWLB/issues"><img src="https://img.shields.io/github/issues/I2rys/LSWLB.svg"></img></a>
-	<a href="https://nodejs.org/"><img src="https://img.shields.io/badge/-Nodejs-green?style=flat-square&logo=Node.js"></img></a>
-</p>
-
+# LSWLB
+Blazing fast Linksys Smart Wi-Fi login bruteforcer.
 
 ## Installation
 Github:
+```
+git clone https://github.com/I2rys/LSWLB
+```
 
-    git clone https://github.com/I2rys/LSWLB
+NpmJS:
+```
+npm i request-async fs
+```
 
-NPM Packages:
-
-    npm i base-64 && npm i request
-    
 ## Usage
-
-    node index.js <url> <username> <dictionary>
+```
+node index.js <url> <username> <dictionary>
+```
 
 + url - The url of the Linksys Smart Wi-Fi login page.
 + username - The username of the admin.
